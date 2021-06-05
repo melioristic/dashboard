@@ -3,10 +3,18 @@ import dash_core_components as dcc
 import dash_html_components as html
 import pandas as pd
 
-data = pd.read_csv("avocado.csv")
-data = data.query("type == 'conventional' and region == 'Albany'")
-data["Date"] = pd.to_datetime(data["Date"], format="%Y-%m-%d")
-data.sort_values("Date", inplace=True)
+data = pd.read_csv("gen_data.csv")
+
+precip = data.precip
+dt = data.time
+res_level  =  data.res_level
+res_level_pos = data.res_level+0.1*data.res_level
+res_level_neg = data.res_level-0.1*data.res_level
+
+
+# data = data.query("type == 'conventional' and region == 'Albany'")
+# data["Date"] = pd.to_datetime(data["Date"], format="%Y-%m-%d")
+# data.sort_values("Date", inplace=True)
 
 external_stylesheets = [
     {
@@ -44,8 +52,23 @@ app.layout = html.Div(
                         figure={
                             "data": [
                                 {
-                                    "x": data["Date"],
-                                    "y": data["AveragePrice"],
+                                    "x": dt,
+                                    "y": res_level,
+                                    "type": "lines",
+                                    "color": ["#E12D39"],
+                                    "hovertemplate": "$%{y:.2f}"
+                                                     "<extra></extra>",
+                                },
+                                {   
+                                    "x": dt,
+                                    "y": res_level_pos,
+                                    "type": "lines",
+                                    "hovertemplate": "$%{y:.2f}"
+                                                     "<extra></extra>",
+                                },
+                                {   
+                                    "x": dt,
+                                    "y": res_level_neg,
                                     "type": "lines",
                                     "hovertemplate": "$%{y:.2f}"
                                                      "<extra></extra>",
@@ -62,7 +85,7 @@ app.layout = html.Div(
                                     "tickprefix": "$",
                                     "fixedrange": True,
                                 },
-                                "colorway": ["#17B897"],
+                                #"colorway": ["#17B897"],
                             },
                         },
                     ),
@@ -75,9 +98,9 @@ app.layout = html.Div(
                         figure={
                             "data": [
                                 {
-                                    "x": data["Date"],
-                                    "y": data["Total Volume"],
-                                    "type": "lines",
+                                    "x": dt,
+                                    "y": precip,
+                                    "type": "bar",
                                 },
                             ],
                             "layout": {
